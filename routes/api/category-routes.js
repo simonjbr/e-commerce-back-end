@@ -9,19 +9,32 @@ router.get('/', async (req, res) => {
 	try {
 		const categoryData = await Category.findAll({ include: Product });
 
-		if (categoryData.lenghth > 0) {
+		if (categoryData.length > 0) {
 			res.status(200).json(categoryData);
 		} else {
-			res.status(404).json({ message: 'There is no category data'});
+			res.status(404).json({ message: 'There is no category data' });
 		}
 	} catch (error) {
 		res.status(500).json(error);
 	}
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	// find one category by its `id` value
 	// be sure to include its associated Products
+	try {
+		const categoryId = req.params.id;
+
+		const categoryData = await Category.findByPk(categoryId, { include: Product });
+
+		if (categoryData) {
+			res.status(200).json(categoryData);
+		} else {
+			res.status(404).json({ message: 'There is no category data' });
+		}
+	} catch (error) {
+		res.status(500).json(error);
+	}
 });
 
 router.post('/', (req, res) => {
