@@ -68,11 +68,11 @@ router.put('/:id', async (req, res) => {
 			const updateCategory = await Category.update({
 				category_name: categoryName,
 			},
-			{
-				where: {
-					id: categoryId
-				}
-			});
+				{
+					where: {
+						id: categoryId
+					}
+				});
 			res.status(200).json(updateCategory);
 		} else {
 			res.status(404).json({ message: 'Failed to update category' });
@@ -82,8 +82,26 @@ router.put('/:id', async (req, res) => {
 	}
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
 	// delete a category by its `id` value
+	try {
+		const categoryId = req.params.id;
+
+		const categoryData = await Category.findByPk(categoryId);
+
+		if (categoryData) {
+			const deleteCategory = await Category.destroy({
+				where: {
+					id: categoryId
+				}
+			});
+			res.status(200).json(deleteCategory);
+		} else {
+			res.status(404).json({ message: 'Failed to delete category' });
+		}
+	} catch (error) {
+		res.status(500).json(error);
+	}
 });
 
 module.exports = router;
